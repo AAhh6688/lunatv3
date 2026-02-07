@@ -17,6 +17,45 @@ import { SearchResult } from '@/lib/types';
 import PageLayout from '@/components/PageLayout';
 import VideoCard from '@/components/VideoCard';
 
+// 定义过滤关键词列表（从附件文档中提取的所有关键词）
+// 包括日文、简体中文、繁体中文、英文
+// 我将它们放入一个大数组中，忽略大小写进行匹配（在过滤函数中处理）
+const FILTER_KEYWORDS = [
+  // 日文关键词 (从文档A到G部分)
+  'アダルト', 'AV', '裏', 'エロ', 'ポルノ', 'R18', 'R18+', '禁断', '密着', '無修正', 'モザイク消し',
+  '素人', '巨乳', '美乳', '人妻', '熟女', '女子校生', 'JK', '女子大生', 'JD', 'お姉さん', '義母',
+  '不倫', '近親相姦', '痴漢', '強制', '監禁', '调教', 'SM', '緊縛', '露出', '盗撮', 'のぞき',
+  '中出し', 'フェラ', 'クンニ', '手コキ', 'パイズリ', 'イラマチオ', '本番', '生中出し', '顔射',
+  'ぶっかけ', '射精', '絶頂', '潮吹き', 'バイブ', '玩具', 'コスプレ', '制服', '競泳水着', '下着', 'パンティー',
+  '看護師', 'ナース', 'OL', '先生', '教師', '家庭教師', 'メイド', 'ＣＡ', 'モデル', 'アイドル', '美少女', '若妻',
+  '乱交', 'ハメ撮り', '逆レイプ', '陵辱', 'レイプ', '拘束', '野外', '公共の場', '温泉', '混浴', '介護', '催眠', '媚薬', '放置', 'アナル',
+  'マニア', 'フェチ', 'お蔵入り', '独占', '先行配信', '見放題', '激安', '無料', 'フル', '高画質',
+  'ヤリたい', 'ヤル', 'イッちゃう', '気持ちいい', '感じまくり', 'ガチ', 'ナンパ', '逆ナン', '合コン', '援交', 'パパ活', 'ホスト', '风俗', 'ソープ', 'デリヘル',
+
+  // 简体中文关键词 (从核心过滤关键词列表1到4部分，以及其它)
+  '国产', '原创', '自拍', '无码', '偷拍', '街拍', '探花', '大神', '实录', '破解', '流出', '泄露', '全集', '资源', '网盘', '成人', '色情', '伦理', '三级', '片', '写真', '美女', '嫩模', '网红', '外围', '约炮', '直播', '漏点', '露点', '大尺度', '精品', '精选', '重磅', '新作', '福利', '车牌', '番号',
+  '学生', '校花', '学姐', '教师', '老师', '女教', '护士', '制服', '空姐', 'OL', '白领', '少妇', '人妻', '熟女', '良家', '邻家', '妹子', '小姐姐', '女神', '女友', '前任', '闺蜜', '继母', '小姨', '嫂子', '婆婆', '同事', '老板', '中介', '外卖', '快递', '房东', '保姆', '萝莉',
+  '做爱', '啪啪', '房事', '激情', '缠绵', '肉搏', '内射', '中出', '颜射', '口交', '深喉', '吹箫', '打炮', '打飞机', '自慰', '慰藉', '抠抠', '震动', '潮吹', '高潮', '射精', '喷射', '喷水', '巨乳', '大胸', '美胸', '翘臀', '私处', '阴部', '下体', '玉足', '丝袜', '黑丝', '肉丝', '网袜', '捆绑', '调教', 'SM',
+  '强奸', '强迫', '迷奸', '诱奸', '轮奸', '暴力', '血腥', '虐待', '凌辱', '禁锢', '监禁', '反抗', '惨叫', '伦理', '乱伦', '父女', '母子', '姐弟', '兄妹', '公公', '媳妇', '叔叔', '侄女', '爷爷', '孙女', '禁断', '野战', '野外', '车震', '酒店', '宾馆', '洗手间', '公厕',
+  '吃瓜', '黑料', '实锤', '不雅视频', 'XX门', '视频流出', '完整版', '反转', '爆料', '新作', '成人版', '苹果', '手机',
+
+  // 繁体中文关键词 (对应简体部分)
+  '國產', '原創', '自拍', '無碼', '偷拍', '街拍', '探花', '大神', '實錄', '破解', '流出', '洩露', '全集', '資源', '網盤', '成人', '色情', '倫理', '三級', '片', '寫真', '美女', '嫩模', '網紅', '外圍', '約砲', '直播', '漏點', '露點', '大尺度', '精品', '精選', '重磅', '新作', '福利', '車牌', '番號',
+  '學生', '校花', '學姐', '教師', '老師', '女教', '護士', '制服', '空姐', 'OL', '白領', '少婦', '人妻', '熟女', '良家', '鄰家', '妹子', '小姐姐', '女神', '女友', '前任', '閨蜜', '繼母', '小姨', '嫂子', '婆婆', '同事', '老闆', '中介', '外賣', '快遞', '房東', '保姆', '蘿莉',
+  '做愛', '啪啪', '房事', '激情', '纏綿', '肉搏', '內射', '中出', '顏射', '口交', '深喉', '吹簫', '打砲', '打飛機', '自慰', '慰藉', '摳摳', '震動', '潮吹', '高潮', '射精', '噴射', '噴水', '巨乳', '大胸', '美胸', '翹臀', '私處', '陰部', '下體', '玉足', '絲襪', '黑絲', '肉絲', '網襪', '捆綁', '調教', 'SM',
+  '強姦', '強迫', '迷姦', '誘姦', '輪姦', '暴力', '血腥', '虐待', '凌辱', '禁錮', '監禁', '反抗', '慘叫', '倫理', '亂倫', '父女', '母子', '姐弟', '兄妹', '公公', '媳婦', '叔叔', '侄女', '爺爺', '孫女', '禁斷', '野戰', '野外', '車震', '酒店', '賓館', '洗手間', '公廁',
+
+  // 英文关键词 (核心和进阶)
+  'Porn', 'Adult', 'Hentai', 'Uncensored', 'Amateur', 'Erotica', 'Hardcore', 'BDSM', 'Incest', 'Creampie', 'Blowjob', 'BJ', 'Facial', 'Cum', 'Ejaculation', 'Fetish', 'Milf', 'Teen', 'Orgy', 'Gangbang', 'Hidden', 'Spy', 'Cam', 'Webcam', 'Nude', 'Naked', 'XXX',
+  'POV', 'Squirt', 'Swinger', 'Taboo', 'Deepthroat', 'Handjob', 'HJ', 'Threesome', '3P', 'Anal', 'Masturbation', 'Big Dick', 'Cock', 'Cuckold', 'Double Penetration', 'Interracial', 'Massage', 'Submissive', 'Bondage', 'Voyeur', 'Busty', 'Squirting', 'Erotic'
+];
+
+// 过滤函数：检查字符串是否包含任何过滤关键词（忽略大小写）
+function containsFilteredKeyword(text: string): boolean {
+  const lowerText = text.toLowerCase();
+  return FILTER_KEYWORDS.some(keyword => lowerText.includes(keyword.toLowerCase()));
+}
+
 function SearchPageClient() {
   // 搜索历史
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -29,6 +68,11 @@ function SearchPageClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+  // 新增：用户年龄确认状态（默认假设未成年，需要用户确认）
+  // 作为新手友好设计，我们添加一个简单的年龄确认弹窗或开关
+  const [isAdultUser, setIsAdultUser] = useState(false); // 默认 false，视为未成年
+  const [showAgeConfirm, setShowAgeConfirm] = useState(true); // 初次加载显示确认对话框
 
   // 获取默认聚合设置：只读取用户本地设置，默认为 true
   const getDefaultAggregate = () => {
@@ -135,6 +179,15 @@ function SearchPageClient() {
 
     document.body.addEventListener('scroll', handleScroll, { passive: true });
 
+    // 新增：从 localStorage 加载用户年龄确认（持久化）
+    if (typeof window !== 'undefined') {
+      const savedAdultStatus = localStorage.getItem('isAdultUser');
+      if (savedAdultStatus === 'true') {
+        setIsAdultUser(true);
+        setShowAgeConfirm(false);
+      }
+    }
+
     return () => {
       unsubscribe();
       isRunning = false; // 停止 requestAnimationFrame 循环
@@ -165,33 +218,38 @@ function SearchPageClient() {
         `/api/search?q=${encodeURIComponent(query.trim())}`
       );
       const data = await response.json();
-      setSearchResults(
-        data.results.sort((a: SearchResult, b: SearchResult) => {
-          // 优先排序：标题与搜索词完全一致的排在前面
-          const aExactMatch = a.title === query.trim();
-          const bExactMatch = b.title === query.trim();
+      let results = data.results.sort((a: SearchResult, b: SearchResult) => {
+        // 优先排序：标题与搜索词完全一致的排在前面
+        const aExactMatch = a.title === query.trim();
+        const bExactMatch = b.title === query.trim();
 
-          if (aExactMatch && !bExactMatch) return -1;
-          if (!aExactMatch && bExactMatch) return 1;
+        if (aExactMatch && !bExactMatch) return -1;
+        if (!aExactMatch && bExactMatch) return 1;
 
-          // 如果都匹配或都不匹配，则按原来的逻辑排序
-          if (a.year === b.year) {
-            return a.title.localeCompare(b.title);
+        // 如果都匹配或都不匹配，则按原来的逻辑排序
+        if (a.year === b.year) {
+          return a.title.localeCompare(b.title);
+        } else {
+          // 处理 unknown 的情况
+          if (a.year === 'unknown' && b.year === 'unknown') {
+            return 0;
+          } else if (a.year === 'unknown') {
+            return 1; // a 排在后面
+          } else if (b.year === 'unknown') {
+            return -1; // b 排在后面
           } else {
-            // 处理 unknown 的情况
-            if (a.year === 'unknown' && b.year === 'unknown') {
-              return 0;
-            } else if (a.year === 'unknown') {
-              return 1; // a 排在后面
-            } else if (b.year === 'unknown') {
-              return -1; // b 排在后面
-            } else {
-              // 都是数字年份，按数字大小排序（大的在前面）
-              return parseInt(a.year) > parseInt(b.year) ? -1 : 1;
-            }
+            // 都是数字年份，按数字大小排序（大的在前面）
+            return parseInt(a.year) > parseInt(b.year) ? -1 : 1;
           }
-        })
-      );
+        }
+      });
+
+      // 新增：如果用户不是成人，过滤掉包含关键词的结果
+      if (!isAdultUser) {
+        results = results.filter((item: SearchResult) => !containsFilteredKeyword(item.title));
+      }
+
+      setSearchResults(results);
       setShowResults(true);
     } catch (error) {
       setSearchResults([]);
@@ -232,9 +290,56 @@ function SearchPageClient() {
     }
   };
 
+  // 新增：处理年龄确认
+  const confirmAdult = () => {
+    setIsAdultUser(true);
+    setShowAgeConfirm(false);
+    // 保存到 localStorage，坚持下次访问
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('isAdultUser', 'true');
+    }
+    // 重新获取搜索结果（如果有当前搜索）
+    if (searchQuery) {
+      fetchSearchResults(searchQuery);
+    }
+  };
+
+  const denyAdult = () => {
+    setShowAgeConfirm(false);
+    // 可选：显示警告或重定向，但这里简单关闭对话框，保持过滤
+  };
+
   return (
     <PageLayout activePath='/search'>
       <div className='px-4 sm:px-10 py-4 sm:py-8 overflow-visible mb-10'>
+        {/* 新增：年龄确认对话框（简单模态） */}
+        {showAgeConfirm && (
+          <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+            <div className='bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full'>
+              <h2 className='text-lg font-bold mb-4 text-gray-800 dark:text-gray-200'>
+                年龄确认
+              </h2>
+              <p className='mb-6 text-gray-600 dark:text-gray-400'>
+                本应用包含可能不适合未成年人的内容。您是否已满18岁？
+              </p>
+              <div className='flex justify-end gap-4'>
+                <button
+                  onClick={denyAdult}
+                  className='px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded'
+                >
+                  否（过滤内容）
+                </button>
+                <button
+                  onClick={confirmAdult}
+                  className='px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded'
+                >
+                  是（显示全部）
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 搜索框 */}
         <div className='mb-8'>
           <form onSubmit={handleSearch} className='max-w-2xl mx-auto'>
