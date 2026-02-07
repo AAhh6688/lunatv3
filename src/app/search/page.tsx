@@ -21,7 +21,7 @@ import VideoCard from '@/components/VideoCard';
 // 包括日文、简体中文、繁体中文、英文
 // 我将它们放入一个大数组中，忽略大小写进行匹配（在过滤函数中处理）
 const FILTER_KEYWORDS = [
-  // 日文关键词 (从文档A到G部分)
+  // 日文关键词 (从文档A到G部分，以及基础分类等)
   'アダルト', 'AV', '裏', 'エロ', 'ポルノ', 'R18', 'R18+', '禁断', '密着', '無修正', 'モザイク消し',
   '素人', '巨乳', '美乳', '人妻', '熟女', '女子校生', 'JK', '女子大生', 'JD', 'お姉さん', '義母',
   '不倫', '近親相姦', '痴漢', '強制', '監禁', '调教', 'SM', '緊縛', '露出', '盗撮', 'のぞき',
@@ -31,8 +31,18 @@ const FILTER_KEYWORDS = [
   '乱交', 'ハメ撮り', '逆レイプ', '陵辱', 'レイプ', '拘束', '野外', '公共の場', '温泉', '混浴', '介護', '催眠', '媚薬', '放置', 'アナル',
   'マニア', 'フェチ', 'お蔵入り', '独占', '先行配信', '見放題', '激安', '無料', 'フル', '高画質',
   'ヤリたい', 'ヤル', 'イッちゃう', '気持ちいい', '感じまくり', 'ガチ', 'ナンパ', '逆ナン', '合コン', '援交', 'パパ活', 'ホスト', '风俗', 'ソープ', 'デリヘル',
+  'アマチュア', 'JC', '貧乳', '美脚', '着衣', '全裸', 'オナニー', '手淫', '正常位', '騎乗位', '後背位', '立ちバック', '口交', '失神', '痙攣',
+  '鬼畜', '凌辱', '奴隷', '拷問', '薬物', '恥辱', '暴力', '縛り', '吊り', '責め', '羞恥', '盗み見', '覗き',
+  '変態', '肛門', '糞尿', 'スカトロ', '嘔吐', '獣姦', '触手', '尿道', '食糞', '黄金', '浣腸', '鼻フック', '猿ぐつわ', 'ギャグ', '首絞め', '針', '放尿', '飲尿', '息子', '娘', '義父', '兄', '妹', '姉', '弟', '親子', '叔母', '叔父', '家族', '義姉', '義妹',
+  '女教師', '家政婦', 'スチュワーデス', 'CA', '女子寮', '露天風呂', 'ラブホテル', '教室', '体育倉庫', '満員電車', 'オフィス', '受付', '秘書',
+  '三上悠亜', '河北彩花', '河北彩伽', '深田えいみ', '桃乃木かな', '桜空もも', '天使もえ', '橋本ありな', '相沢みなみ', '涼森れむ', '伊藤舞雪', '本郷愛', '有坂深雪', '葵つかさ', '希島あいり', '枢木あおい', '八木奈々', '山手梨愛', '七沢みあ', '小宵こなん', '安齋らら', '紗倉まな', '明里つむぎ', '石川澪', '楪カレン', '楓ふうあ', '永野いちか', '唯井まひろ', '水端あさみ', '梓ヒカリ', '美谷朱里', '栄川乃亜', '坂道みる', '希崎ジェシカ', '波多野結衣', '上原亜衣', '鈴村あいり', '園田みおん', '明日花キララ', '吉沢明歩', '蒼井そら', '小澤マリア', '宇都宮しをん', '霧島さくら', '水野朝陽', '浜崎真緒', 'Julia', '若月みいな', '霜月るな', '根尾あかり', '椎名そら', '篠田ゆう', '小野夕子', '浅田結梨', '乙白さやか', '山岸逢花', '羽咲みあ', '白石茉莉奈', '宝田もなみ', '跡美しゅり', '桜庭ななみ', '星奈あい', '結城るりな', '真木今日子', '篠田あゆみ', '里美ゆりあ',
+  'S1', 'エスワン', 'MOODYZ', 'ムーディーズ', 'Prestige', 'プレステージ', 'SOD', 'Soft On Demand', 'Idea Pocket', 'アイポケ', 'Alice Japan', 'アリスジャパン', 'Attackers', 'アタッカーズ', 'Dogma', 'ドグマ', 'E-BODY', 'Faleno', 'ファレノ', 'Madonna', 'マドンナ', 'TMA', 'MUTEKI', 'Caribbeancom', 'カリビアンコム', 'Tokyo-Hot', '東京熱', 'Heyzo', 'ヘイゾー', '1pondo', '一本道', 'Musun', '天然むすめ', 'Pacopacomama', 'パコパコママ', '10musume', '十代美少女', '溜池ゴロー', '宇宙企画', '映機', '幻影',
 
-  // 简体中文关键词 (从核心过滤关键词列表1到4部分，以及其它)
+  // 简体中文关键词 (核心成人词汇、暴力与血腥、新增电信诈骗、隐晦/代称、核心过滤关键词列表1到4部分，以及其它)
+  'A片', '淫秽', '骚麦', '裸聊', '中出', '颜射', '偷拍', '自拍', '乱伦', '强奸', '轮奸', '幼女', '童贞', '巨乳', '丰臀', '翘臀', '调教', '捆绑', '虐待', '性爱', '做爱', '插我', '扣水', '喷水', '一夜情', '约炮', '炮友', '嫖娼', '下流', '骚货', '贱货', '浪叫', '肉棒', '阴道', '阴茎', '龟头', '卵子', '奶子', '露点', '三级片', '无码', '有码', '步兵', '骑兵', '露脸', '内射', '精液', '高潮', '手淫', '自慰', '撸管', '慰安妇', '熟女', '人妻', '护士', '老师', '制服', '诱惑', '勾引', '呻吟', '毛片', '簧片', '涩图', '性奴', '兽交', '群交', '换妻', '私房', '出轨', '门事件', '视频流出', '麻豆传媒', '糖心Vlog', '天美传媒', '果冻传媒', '星空无限', '九一', '探花', '推特大神', '网红黑料', '反差婊', '母狗', '骚妻', '推油', '金鳞岂是池中物', '肉蒲团', '金瓶梅', '色戒', '迷奸', '强奸视频',
+  '暴力', '血腥', '碎尸', '斩首', '处决', '自杀', '割喉', '剖腹', '杀人', '尸体', '虐杀', '枪毙', '爆炸', '恐怖分子', '凌迟', '肢解', '活摘', '虐猫', '虐狗', '暴力美学', '满脸是血', '血流不止', '断肢', '复仇', '恐怖袭击', 'IS斩首', '叙利亚战争视频', '车祸现场', '坠楼视频', '跳楼视频', '惨叫', '分尸', '暴力拆迁', '城管打人', '私刑', '电击', '水刑', '烧炭', '服毒', '毒杀', '氰化物', '割腕', '上吊', '血腥玛丽', '死亡视频', '暗网视频',
+  '跑分', '洗钱', '水房', '卡农', '杀猪盘', '刷单返现', '兼职赚钱', '博彩源码', '棋牌破解', '菠菜', '百家乐技巧', '牛牛开挂', '北京赛车', '地下钱庄', '裸聊诈骗', '勒索软件', '木马病毒', '翻墙软件', 'SSR', 'V2Ray', '梯子', '节点', '科学上网', '账号代充', '低价话费', 'USDT承兑', '虚拟货币洗钱', '杀猪盘内幕', '投资导师', '内部消息', '操盘手', '黑客攻击', 'DDOS', 'CC攻击', '库带库', '撞库', '开盒', '人肉搜索', '隐私查询', '四件套购买', '实名卡', '接码平台', '短信轰炸', '呼死你', '强制汇款', '冒充公检法', '社工库', 'AI换脸视频', '深度伪造', 'Deepfake', '换脸色情', '定制视频', '定制音频', '假钞', '枪支购买', '火药配方', '弩', '违禁药品', '迷晕药', '听话水', '乖乖水', '催情药',
+  '18禁', '种子', '磁力', '磁力链接', '番号', '车牌', '发车', '老司机', '翻墙', '吃瓜', '爆料', '黑料', '修车', '外围', '技师', '大宝剑', '挂炉', '海鲜', '森林', '鲍鱼', '蘑菇', '木耳', '馒头', '嫩草', '极品', '福利视频', '深夜食堂', '禁播', '未删减', '完整版', '私密视频', '付费资源', '内幕', '瓜田', '网红黑料',
   '国产', '原创', '自拍', '无码', '偷拍', '街拍', '探花', '大神', '实录', '破解', '流出', '泄露', '全集', '资源', '网盘', '成人', '色情', '伦理', '三级', '片', '写真', '美女', '嫩模', '网红', '外围', '约炮', '直播', '漏点', '露点', '大尺度', '精品', '精选', '重磅', '新作', '福利', '车牌', '番号',
   '学生', '校花', '学姐', '教师', '老师', '女教', '护士', '制服', '空姐', 'OL', '白领', '少妇', '人妻', '熟女', '良家', '邻家', '妹子', '小姐姐', '女神', '女友', '前任', '闺蜜', '继母', '小姨', '嫂子', '婆婆', '同事', '老板', '中介', '外卖', '快递', '房东', '保姆', '萝莉',
   '做爱', '啪啪', '房事', '激情', '缠绵', '肉搏', '内射', '中出', '颜射', '口交', '深喉', '吹箫', '打炮', '打飞机', '自慰', '慰藉', '抠抠', '震动', '潮吹', '高潮', '射精', '喷射', '喷水', '巨乳', '大胸', '美胸', '翘臀', '私处', '阴部', '下体', '玉足', '丝袜', '黑丝', '肉丝', '网袜', '捆绑', '调教', 'SM',
@@ -40,14 +50,20 @@ const FILTER_KEYWORDS = [
   '吃瓜', '黑料', '实锤', '不雅视频', 'XX门', '视频流出', '完整版', '反转', '爆料', '新作', '成人版', '苹果', '手机',
 
   // 繁体中文关键词 (对应简体部分)
+  'A片', '淫穢', '騷麥', '裸聊', '中出', '顏射', '偷拍', '自拍', '亂倫', '強姦', '輪姦', '幼女', '童貞', '巨乳', '豐臀', '翹臀', '調教', '捆綁', '虐待', '性愛', '做愛', '插我', '扣水', '噴水', '一夜情', '約炮', '炮友', '嫖娼', '下流', '騷貨', '賤貨', '浪叫', '肉棒', '陰道', '陰莖', '龜頭', '卵子', '奶子', '露點', '三級片', '無碼', '有碼', '步兵', '騎兵', '露臉', '內射', '精液', '高潮', '手淫', '自慰', '擼管', '慰安婦', '熟女', '人妻', '護士', '老師', '制服', '誘惑', '勾引', '呻吟', '毛片', '簧片', '澀圖', '性奴', '獸交', '群交', '換妻', '私房', '出軌', '門事件', '視頻流出', '麻豆傳媒', '糖心Vlog', '天美傳媒', '果凍傳媒', '星空無限', '九一', '探花', '推特大神', '網紅黑料', '反差婊', '母狗', '騷妻', '推油', '迷姦', '強姦視頻',
   '國產', '原創', '自拍', '無碼', '偷拍', '街拍', '探花', '大神', '實錄', '破解', '流出', '洩露', '全集', '資源', '網盤', '成人', '色情', '倫理', '三級', '片', '寫真', '美女', '嫩模', '網紅', '外圍', '約砲', '直播', '漏點', '露點', '大尺度', '精品', '精選', '重磅', '新作', '福利', '車牌', '番號',
   '學生', '校花', '學姐', '教師', '老師', '女教', '護士', '制服', '空姐', 'OL', '白領', '少婦', '人妻', '熟女', '良家', '鄰家', '妹子', '小姐姐', '女神', '女友', '前任', '閨蜜', '繼母', '小姨', '嫂子', '婆婆', '同事', '老闆', '中介', '外賣', '快遞', '房東', '保姆', '蘿莉',
   '做愛', '啪啪', '房事', '激情', '纏綿', '肉搏', '內射', '中出', '顏射', '口交', '深喉', '吹簫', '打砲', '打飛機', '自慰', '慰藉', '摳摳', '震動', '潮吹', '高潮', '射精', '噴射', '噴水', '巨乳', '大胸', '美胸', '翹臀', '私處', '陰部', '下體', '玉足', '絲襪', '黑絲', '肉絲', '網襪', '捆綁', '調教', 'SM',
   '強姦', '強迫', '迷姦', '誘姦', '輪姦', '暴力', '血腥', '虐待', '凌辱', '禁錮', '監禁', '反抗', '慘叫', '倫理', '亂倫', '父女', '母子', '姐弟', '兄妹', '公公', '媳婦', '叔叔', '侄女', '爺爺', '孫女', '禁斷', '野戰', '野外', '車震', '酒店', '賓館', '洗手間', '公廁',
 
-  // 英文关键词 (核心和进阶)
+  // 英文关键词 (核心、进阶、色情与成人分类、解剖学、暴力、变态、补充标签)
   'Porn', 'Adult', 'Hentai', 'Uncensored', 'Amateur', 'Erotica', 'Hardcore', 'BDSM', 'Incest', 'Creampie', 'Blowjob', 'BJ', 'Facial', 'Cum', 'Ejaculation', 'Fetish', 'Milf', 'Teen', 'Orgy', 'Gangbang', 'Hidden', 'Spy', 'Cam', 'Webcam', 'Nude', 'Naked', 'XXX',
-  'POV', 'Squirt', 'Swinger', 'Taboo', 'Deepthroat', 'Handjob', 'HJ', 'Threesome', '3P', 'Anal', 'Masturbation', 'Big Dick', 'Cock', 'Cuckold', 'Double Penetration', 'Interracial', 'Massage', 'Submissive', 'Bondage', 'Voyeur', 'Busty', 'Squirting', 'Erotic'
+  'POV', 'Squirt', 'Swinger', 'Taboo', 'Deepthroat', 'Handjob', 'HJ', 'Threesome', '3P', 'Anal', 'Masturbation', 'Big Dick', 'Cock', 'Cuckold', 'Double Penetration', 'Interracial', 'Massage', 'Submissive', 'Bondage', 'Voyeur', 'Busty', 'Squirting', 'Erotic',
+  '18plus', 'bang', 'big-ass', 'big-tits', 'brazzers', 'brunette', 'camgirl', 'climax', 'deep-penetration', 'double-penetration', 'escort', 'filming', 'flick', 'fucked', 'hook-up', 'horny', 'hot-girl', 'jizz', 'lesbian', 'lingerie', 'lust', 'mistress', 'naughty', 'nympho', 'orgasmic', 'penetration', 'playboy', 'pornographic', 'pornhub', 'pussy', 'redtube', 'seduction', 'sex', 'sex-video', 'sexy', 'slut', 'striptease', 'sultry', 'throuple', 'tits', 'toys', 'tube', 'vixen', 'wet', 'xhamster', 'xnxx', 'xvideos',
+  'areola', 'ass', 'balls', 'ballsack', 'beaver', 'boobs', 'bottomless', 'breast', 'butt', 'buttocks', 'clit', 'clitoris', 'dick', 'dildo', 'dong', 'erection', 'foreskin', 'genitals', 'labia', 'nipples', 'nutsack', 'penis', 'phallus', 'pubic', 'scrotum', 'shaft', 'snatch', 'sperm', 'testicles', 'vagina', 'vulva', 'wang',
+  'assault', 'beheaded', 'beheading', 'blood', 'bloody', 'brutality', 'cannibal', 'carnage', 'corpse', 'cruelty', 'dead-body', 'death', 'decapitation', 'dismemberment', 'execution', 'fatal', 'gore', 'ghoulish', 'homicide', 'horror', 'hurt', 'incinerate', 'insane', 'kill', 'killing', 'lynch', 'massacre', 'morbid', 'murder', 'mutilated', 'mutilation', 'necro', 'pain', 'psycho', 'savage', 'slaughter', 'snuff', 'stab', 'stabbing', 'strangled', 'suffering', 'suicide', 'terror', 'torture', 'trauma', 'victim', 'violence', 'violent', 'war-crime', 'weapon',
+  'abduction', 'abuse', 'animal-cruelty', 'beastiality', 'bestiality', 'captive', 'captivity', 'child-abuse', 'coerced', 'confinement', 'deviant', 'domestic-violence', 'drugging', 'exploitation', 'extreme', 'filth', 'forced', 'kidnapping', 'kink', 'masochism', 'molestation', 'non-consensual', 'nymphomania', 'obscene', 'paraphilia', 'pedo', 'perversion', 'pervert', 'predator', 'rape', 'sadism', 'sadistic', 'sexual-assault', 'sick', 'slave', 'trafficking', 'underworld', 'unethical', 'vile', 'zoophilia',
+  'age-restricted', 'all-internal', 'autoerotic', 'b-grade', 'black-market', 'blue-film', 'blurred', 'bondage-sex', 'censored-porn', 'cream', 'dark-web', 'deep-fake', 'dirty-talk', 'dungeon', 'ebony', 'explicit-content', 'family-strokes', 'femdom', 'forbidden', 'free-porn', 'full-video', 'gagging', 'girl-on-girl', 'gold-digger', 'hidden-cam', 'homemade', 'illegal', 'indecent', 'kink-shaming', 'lace', 'latex', 'leather', 'live-sex', 'lonely-wife', 'mad-science', 'maledom', 'midnight', 'movie-x', 'night-club', 'no-limit', 'not-safe-for-work', 'nsfw', 'obsession', 'office-sex', 'onlyfans', 'out-of-control', 'over-the-top', 'passion', 'peak', 'peep', 'play-doll', 'private-video', 'raw', 'real-sex', 'rebel', 'restricted', 'revenge', 'rough', 'scandal', 'secret-video', 'shackle', 'sheer', 'shock', 'skin', 'snuck', 'softcore', 'spicy', 'spoiled', 'step-sister', 'step-mom', 'strapped', 'teaser', 'thrill', 'tied-up', 'top-rated', 'toxic', 'trailer', 'trapped', 'underground', 'undercover', 'unique-fetish', 'unleashed', 'unlocked', 'unrestrained', 'untold', 'upskirt', 'vanilla', 'variety', 'viral-video', 'virtual-sex', 'wild', 'x-rated', 'youth-targeted', 'zone'
 ];
 
 // 过滤函数：检查字符串是否包含任何过滤关键词（忽略大小写）
@@ -68,11 +84,6 @@ function SearchPageClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-
-  // 新增：用户年龄确认状态（默认假设未成年，需要用户确认）
-  // 作为新手友好设计，我们添加一个简单的年龄确认弹窗或开关
-  const [isAdultUser, setIsAdultUser] = useState(false); // 默认 false，视为未成年
-  const [showAgeConfirm, setShowAgeConfirm] = useState(true); // 初次加载显示确认对话框
 
   // 获取默认聚合设置：只读取用户本地设置，默认为 true
   const getDefaultAggregate = () => {
@@ -179,15 +190,6 @@ function SearchPageClient() {
 
     document.body.addEventListener('scroll', handleScroll, { passive: true });
 
-    // 新增：从 localStorage 加载用户年龄确认（持久化）
-    if (typeof window !== 'undefined') {
-      const savedAdultStatus = localStorage.getItem('isAdultUser');
-      if (savedAdultStatus === 'true') {
-        setIsAdultUser(true);
-        setShowAgeConfirm(false);
-      }
-    }
-
     return () => {
       unsubscribe();
       isRunning = false; // 停止 requestAnimationFrame 循环
@@ -244,10 +246,8 @@ function SearchPageClient() {
         }
       });
 
-      // 新增：如果用户不是成人，过滤掉包含关键词的结果
-      if (!isAdultUser) {
-        results = results.filter((item: SearchResult) => !containsFilteredKeyword(item.title));
-      }
+      // 过滤掉包含关键词的结果（对所有用户有效）
+      results = results.filter((item: SearchResult) => !containsFilteredKeyword(item.title));
 
       setSearchResults(results);
       setShowResults(true);
@@ -290,56 +290,9 @@ function SearchPageClient() {
     }
   };
 
-  // 新增：处理年龄确认
-  const confirmAdult = () => {
-    setIsAdultUser(true);
-    setShowAgeConfirm(false);
-    // 保存到 localStorage，坚持下次访问
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('isAdultUser', 'true');
-    }
-    // 重新获取搜索结果（如果有当前搜索）
-    if (searchQuery) {
-      fetchSearchResults(searchQuery);
-    }
-  };
-
-  const denyAdult = () => {
-    setShowAgeConfirm(false);
-    // 可选：显示警告或重定向，但这里简单关闭对话框，保持过滤
-  };
-
   return (
     <PageLayout activePath='/search'>
       <div className='px-4 sm:px-10 py-4 sm:py-8 overflow-visible mb-10'>
-        {/* 新增：年龄确认对话框（简单模态） */}
-        {showAgeConfirm && (
-          <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
-            <div className='bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full'>
-              <h2 className='text-lg font-bold mb-4 text-gray-800 dark:text-gray-200'>
-                年龄确认
-              </h2>
-              <p className='mb-6 text-gray-600 dark:text-gray-400'>
-                本应用包含可能不适合未成年人的内容。您是否已满18岁？
-              </p>
-              <div className='flex justify-end gap-4'>
-                <button
-                  onClick={denyAdult}
-                  className='px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded'
-                >
-                  否（过滤内容）
-                </button>
-                <button
-                  onClick={confirmAdult}
-                  className='px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded'
-                >
-                  是（显示全部）
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* 搜索框 */}
         <div className='mb-8'>
           <form onSubmit={handleSearch} className='max-w-2xl mx-auto'>
