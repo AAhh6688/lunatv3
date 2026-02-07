@@ -18,7 +18,7 @@ import PageLayout from '@/components/PageLayout';
 import VideoCard from '@/components/VideoCard';
 
 // 定义过滤关键词列表（从附件文档中提取的所有关键词）
-// 包括日文、简体中文、繁体中文、英文
+// 包括日文、简体中文、繁体中文、英文，以及新增的短剧过滤关键词
 // 我将它们放入一个大数组中，忽略大小写进行匹配（在过滤函数中处理）
 const FILTER_KEYWORDS = [
   // 日文关键词 (从文档A到G部分，以及基础分类等)
@@ -47,20 +47,8 @@ const FILTER_KEYWORDS = [
   '学生', '校花', '学姐', '教师', '老师', '女教', '护士', '制服', '空姐', 'OL', '白领', '少妇', '人妻', '熟女', '良家', '邻家', '妹子', '小姐姐', '女神', '女友', '前任', '闺蜜', '继母', '小姨', '嫂子', '婆婆', '同事', '老板', '中介', '外卖', '快递', '房东', '保姆', '萝莉',
   '做爱', '啪啪', '房事', '激情', '缠绵', '肉搏', '内射', '中出', '颜射', '口交', '深喉', '吹箫', '打炮', '打飞机', '自慰', '慰藉', '抠抠', '震动', '潮吹', '高潮', '射精', '喷射', '喷水', '巨乳', '大胸', '美胸', '翘臀', '私处', '阴部', '下体', '玉足', '丝袜', '黑丝', '肉丝', '网袜', '捆绑', '调教', 'SM',
   '强奸', '强迫', '迷奸', '诱奸', '轮奸', '暴力', '血腥', '虐待', '凌辱', '禁锢', '监禁', '反抗', '惨叫', '伦理', '乱伦', '父女', '母子', '姐弟', '兄妹', '公公', '媳妇', '叔叔', '侄女', '爷爷', '孙女', '禁断', '野战', '野外', '车震', '酒店', '宾馆', '洗手间', '公厕',
-  '吃瓜', '黑料', '实锤', '不雅视频', 'XX门', '视频流出', '完整版', '反转', '爆料', '新作', '成人版', '苹果', '手机', '做出',
+  '吃瓜', '黑料', '实锤', '不雅视频', 'XX门', '视频流出', '完整版', '反转', '爆料', '新作', '成人版', '苹果', '手机',
 
-  // 简体中文关键词 (短剧关键词过滤) 
-  ‘总裁’, ‘夫人’, ‘大佬’, ‘老公’, ‘老婆’, ‘娇妻’, ‘千金’, ‘少爷’, ‘小姐’, ‘王爷’, ‘王妃’, ‘丞相’, ‘太后’, ‘状元’, ‘掌门’, ‘师父’, ‘徒弟’, ‘归来’, ‘重生’, ‘逆袭’, ‘反攻’, ‘复仇’, ‘重生之’, ‘重生后’, ‘逆袭记’, 
-‘复仇记’, ‘翻身’, ‘崛起’, ‘称霸’, ‘称王’, ‘成神’, ‘登顶’, ‘巅峰’, ‘至尊’, ‘无上’, ‘旷世’, ‘盖世’, ‘惊天’, ‘逆天’, ‘首富’, ‘豪门’, ‘亿万’, ‘千亿’, ‘万亿’, ‘顶级’, ‘至高’, ‘权势’, ‘权倾’, ‘权谋’, ‘权臣’, 
-‘至尊’, ‘天骄’, ‘天骄之子’, ‘至尊战神’, ‘无敌战神’, ‘无双’, ‘唯一’, ‘独尊’, ‘独宠’, ‘闪婚’, ‘宠妻’, ‘独宠’, ‘偏爱’, ‘甜宠’, ‘虐恋’, ‘相思’, ‘相许’, ‘相守’, ‘相惜’, ‘深情’, ‘薄情’, ‘薄幸’, ‘绝恋’, 
-‘绝恋录’, ‘离歌’, ‘离殇’, ‘别恋’, ‘旧爱’, ‘新欢’, ‘旧情’, ‘情债’, ‘情缘’, ‘情劫’, ‘情劫录’, ‘真千金’, ‘假千金’, ‘寒门’, ‘名门’, ‘豪门’, ‘宗门’, ‘宗族’, ‘家主’, ‘家长’, ‘家国天下’, ‘家族’, ‘宗族’,
- ‘战神’, ‘战神归来’, ‘神主’, ‘神主令’, ‘诡事’, ‘诡异’, ‘灵异修真’, ‘飞升’, ‘渡劫’, ‘阵法’, ‘符箓’, ‘丹药’, ‘灵石’, ‘灵兽’, ‘妖兽’, ‘魔族’, ‘魔尊’, ‘仙尊’, ‘仙君’, ‘仙帝’, ‘道友’, ‘道侣’, ‘穿越’,
- ‘穿书’, ‘重生’, ‘随身空间’, ‘系统’, ‘金手指’, ‘快穿’, ‘无限’, ‘轮回’, ‘前世’, ‘来世’, ‘时光流年’, ‘惊鸿’, ‘月下’, ‘故山’, ‘南风’, ‘烛影’, ‘清影’, ‘红尘’, ‘沧海’, ‘浮生’, ‘旧梦’, ‘长夜’, ‘晚意’,
- ‘今夕’, ‘他年’, ‘锦书’, ‘尺素’, ‘离人’, ‘归人’, ‘故人’, ‘陌路’, ‘花影’, ‘风尘’, ‘野’, ‘野骨’, ‘野性’, ‘偏执’, ‘疯批’, ‘清冷’, ‘清冷仙尊’, ‘温柔’, ‘甜软’, ‘乖巧’, ‘乖乖’, ‘乖乖女’, ‘狠戾’, ‘薄凉’,
- ‘寡情’, ‘深情’, ‘痴情’, ‘多情’, ‘薄情’, ‘腹黑’, ‘毒舌’, ‘带球’, ‘带球跑’, ‘逃婚’, ‘追妻’, ‘火葬’, ‘上位’, ‘下位’, ‘夺嫡’, ‘夺位’, ‘掌权’, ‘夺妻’, ‘夺夫’, ‘争宠’, ‘争宠记’, ‘宫斗’, ‘宅斗’, ‘权谋’,
- ‘谋权’, ‘谋位’, ‘篡位’, ‘篡位夺权’, ‘之恋曲’, ‘日记’, ‘手札’, ‘札记’, ‘笔记’, ‘绝世天才’, ‘绝世高手’, ‘顶级’, ‘顶级宠爱’, ‘顶级战神’, ‘至尊’, ‘至尊战神’, ‘顶级战神归来’, ‘顶级豪门’,
- ‘顶级世家’, ‘顶级权势’, ‘顶级权势家族’, ‘顶级权势集团’
-  
   // 繁体中文关键词 (对应简体部分)
   'A片', '淫穢', '騷麥', '裸聊', '中出', '顏射', '偷拍', '自拍', '亂倫', '強姦', '輪姦', '幼女', '童貞', '巨乳', '豐臀', '翹臀', '調教', '捆綁', '虐待', '性愛', '做愛', '插我', '扣水', '噴水', '一夜情', '約炮', '炮友', '嫖娼', '下流', '騷貨', '賤貨', '浪叫', '肉棒', '陰道', '陰莖', '龜頭', '卵子', '奶子', '露點', '三級片', '無碼', '有碼', '步兵', '騎兵', '露臉', '內射', '精液', '高潮', '手淫', '自慰', '擼管', '慰安婦', '熟女', '人妻', '護士', '老師', '制服', '誘惑', '勾引', '呻吟', '毛片', '簧片', '澀圖', '性奴', '獸交', '群交', '換妻', '私房', '出軌', '門事件', '視頻流出', '麻豆傳媒', '糖心Vlog', '天美傳媒', '果凍傳媒', '星空無限', '九一', '探花', '推特大神', '網紅黑料', '反差婊', '母狗', '騷妻', '推油', '迷姦', '強姦視頻',
   '國產', '原創', '自拍', '無碼', '偷拍', '街拍', '探花', '大神', '實錄', '破解', '流出', '洩露', '全集', '資源', '網盤', '成人', '色情', '倫理', '三級', '片', '寫真', '美女', '嫩模', '網紅', '外圍', '約砲', '直播', '漏點', '露點', '大尺度', '精品', '精選', '重磅', '新作', '福利', '車牌', '番號',
@@ -75,7 +63,10 @@ const FILTER_KEYWORDS = [
   'areola', 'ass', 'balls', 'ballsack', 'beaver', 'boobs', 'bottomless', 'breast', 'butt', 'buttocks', 'clit', 'clitoris', 'dick', 'dildo', 'dong', 'erection', 'foreskin', 'genitals', 'labia', 'nipples', 'nutsack', 'penis', 'phallus', 'pubic', 'scrotum', 'shaft', 'snatch', 'sperm', 'testicles', 'vagina', 'vulva', 'wang',
   'assault', 'beheaded', 'beheading', 'blood', 'bloody', 'brutality', 'cannibal', 'carnage', 'corpse', 'cruelty', 'dead-body', 'death', 'decapitation', 'dismemberment', 'execution', 'fatal', 'gore', 'ghoulish', 'homicide', 'horror', 'hurt', 'incinerate', 'insane', 'kill', 'killing', 'lynch', 'massacre', 'morbid', 'murder', 'mutilated', 'mutilation', 'necro', 'pain', 'psycho', 'savage', 'slaughter', 'snuff', 'stab', 'stabbing', 'strangled', 'suffering', 'suicide', 'terror', 'torture', 'trauma', 'victim', 'violence', 'violent', 'war-crime', 'weapon',
   'abduction', 'abuse', 'animal-cruelty', 'beastiality', 'bestiality', 'captive', 'captivity', 'child-abuse', 'coerced', 'confinement', 'deviant', 'domestic-violence', 'drugging', 'exploitation', 'extreme', 'filth', 'forced', 'kidnapping', 'kink', 'masochism', 'molestation', 'non-consensual', 'nymphomania', 'obscene', 'paraphilia', 'pedo', 'perversion', 'pervert', 'predator', 'rape', 'sadism', 'sadistic', 'sexual-assault', 'sick', 'slave', 'trafficking', 'underworld', 'unethical', 'vile', 'zoophilia',
-  'age-restricted', 'all-internal', 'autoerotic', 'b-grade', 'black-market', 'blue-film', 'blurred', 'bondage-sex', 'censored-porn', 'cream', 'dark-web', 'deep-fake', 'dirty-talk', 'dungeon', 'ebony', 'explicit-content', 'family-strokes', 'femdom', 'forbidden', 'free-porn', 'full-video', 'gagging', 'girl-on-girl', 'gold-digger', 'hidden-cam', 'homemade', 'illegal', 'indecent', 'kink-shaming', 'lace', 'latex', 'leather', 'live-sex', 'lonely-wife', 'mad-science', 'maledom', 'midnight', 'movie-x', 'night-club', 'no-limit', 'not-safe-for-work', 'nsfw', 'obsession', 'office-sex', 'onlyfans', 'out-of-control', 'over-the-top', 'passion', 'peak', 'peep', 'play-doll', 'private-video', 'raw', 'real-sex', 'rebel', 'restricted', 'revenge', 'rough', 'scandal', 'secret-video', 'shackle', 'sheer', 'shock', 'skin', 'snuck', 'softcore', 'spicy', 'spoiled', 'step-sister', 'step-mom', 'strapped', 'teaser', 'thrill', 'tied-up', 'top-rated', 'toxic', 'trailer', 'trapped', 'underground', 'undercover', 'unique-fetish', 'unleashed', 'unlocked', 'unrestrained', 'untold', 'upskirt', 'vanilla', 'variety', 'viral-video', 'virtual-sex', 'wild', 'x-rated', 'youth-targeted', 'zone'
+  'age-restricted', 'all-internal', 'autoerotic', 'b-grade', 'black-market', 'blue-film', 'blurred', 'bondage-sex', 'censored-porn', 'cream', 'dark-web', 'deep-fake', 'dirty-talk', 'dungeon', 'ebony', 'explicit-content', 'family-strokes', 'femdom', 'forbidden', 'free-porn', 'full-video', 'gagging', 'girl-on-girl', 'gold-digger', 'hidden-cam', 'homemade', 'illegal', 'indecent', 'kink-shaming', 'lace', 'latex', 'leather', 'live-sex', 'lonely-wife', 'mad-science', 'maledom', 'midnight', 'movie-x', 'night-club', 'no-limit', 'not-safe-for-work', 'nsfw', 'obsession', 'office-sex', 'onlyfans', 'out-of-control', 'over-the-top', 'passion', 'peak', 'peep', 'play-doll', 'private-video', 'raw', 'real-sex', 'rebel', 'restricted', 'revenge', 'rough', 'scandal', 'secret-video', 'shackle', 'sheer', 'shock', 'skin', 'snuck', 'softcore', 'spicy', 'spoiled', 'step-sister', 'step-mom', 'strapped', 'teaser', 'thrill', 'tied-up', 'top-rated', 'toxic', 'trailer', 'trapped', 'underground', 'undercover', 'unique-fetish', 'unleashed', 'unlocked', 'unrestrained', 'untold', 'upskirt', 'vanilla', 'variety', 'viral-video', 'virtual-sex', 'wild', 'x-rated', 'youth-targeted', 'zone',
+
+  // 新增短剧过滤关键词 (从短剧过滤关键词.txt)
+  '总裁', '夫人', '大佬', '老公', '老婆', '娇妻', '千金', '少爷', '小姐', '王爷', '王妃', '丞相', '太后', '状元', '掌门', '师父', '徒弟', '归来', '重生', '逆袭', '反攻', '复仇', '重生之', '重生后', '逆袭记', '复仇记', '翻身', '崛起', '称霸', '称王', '成神', '登顶', '巅峰', '至尊', '无上', '旷世', '盖世', '惊天', '逆天', '首富', '豪门', '亿万', '千亿', '万亿', '顶级', '至高', '权势', '权倾', '权谋', '权臣', '至尊', '天骄', '天骄之子', '至尊战神', '无敌战神', '无双', '唯一', '独尊', '独宠', '闪婚', '宠妻', '独宠', '偏爱', '甜宠', '虐恋', '相思', '相许', '相守', '相惜', '深情', '薄情', '薄幸', '绝恋', '绝恋录', '离歌', '离殇', '别恋', '旧爱', '新欢', '旧情', '情债', '情缘', '情劫', '情劫录', '真千金', '假千金', '寒门', '名门', '豪门', '宗门', '宗族', '家主', '家长', '家国天下', '家族', '宗族', '战神', '战神归来', '神主', '神主令', '诡事', '诡异', '灵异修真', '飞升', '渡劫', '阵法', '符箓', '丹药', '灵石', '灵兽', '妖兽', '魔族', '魔尊', '仙尊', '仙君', '仙帝', '道友', '道侣', '穿越', '穿书', '重生', '随身空间', '系统', '金手指', '快穿', '无限', '轮回', '前世', '来世', '时光流年', '惊鸿', '月下', '故山', '南风', '烛影', '清影', '红尘', '沧海', '浮生', '旧梦', '长夜', '晚意', '今夕', '他年', '锦书', '尺素', '离人', '归人', '故人', '陌路', '花影', '风尘', '野', '野骨', '野性', '偏执', '疯批', '清冷', '清冷仙尊', '温柔', '甜软', '乖巧', '乖乖', '乖乖女', '狠戾', '薄凉', '寡情', '深情', '痴情', '多情', '薄情', '腹黑', '毒舌', '带球', '带球跑', '逃婚', '追妻', '火葬', '上位', '下位', '夺嫡', '夺位', '掌权', '夺妻', '夺夫', '争宠', '争宠记', '宫斗', '宅斗', '权谋', '谋权', '谋位', '篡位', '篡位夺权', '之恋曲', '日记', '手札', '札记', '笔记', '绝世天才', '绝世高手', '顶级', '顶级宠爱', '顶级战神', '至尊', '至尊战神', '顶级战神归来', '顶级豪门', '顶级世家', '顶级权势', '顶级权势家族', '顶级权势集团'
 ];
 
 // 过滤函数：检查字符串是否包含任何过滤关键词（忽略大小写）
@@ -258,7 +249,7 @@ function SearchPageClient() {
         }
       });
 
-      // 过滤掉包含关键词的结果（对所有用户有效）
+      // 过滤掉包含关键词的结果（对所有用户有效，包括短剧关键词）
       results = results.filter((item: SearchResult) => !containsFilteredKeyword(item.title));
 
       setSearchResults(results);
